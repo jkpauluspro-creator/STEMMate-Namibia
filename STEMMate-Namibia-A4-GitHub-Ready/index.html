@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>STEMMate Namibia | Facilitator Activity Library</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <p class="eyebrow">STEMMate Namibia</p>
+      <h1>Facilitator Activity Library</h1>
+      <p>Find STEM activities, prepare session plans and continue working offline.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="tabs" aria-label="STEMMate sections">
+      <button id="browseTab" type="button" aria-pressed="true">Browse activities</button>
+      <button id="savedTab" type="button" aria-pressed="false">Saved offline (<span id="savedCount">0</span>)</button>
+      <button id="plansTab" type="button" aria-pressed="false">Session plans (<span id="planCount">0</span>)</button>
+      <button id="privacyTab" type="button" aria-pressed="false">Local data &amp; privacy</button>
+    </nav>
+
+    <p id="status" class="status" role="status" aria-live="polite">Loading activities…</p>
+
+    <section id="browseView" aria-labelledby="browseHeading">
+      <h2 id="browseHeading" tabindex="-1">Browse STEM activities</h2>
+      <div class="filters">
+        <div class="field">
+          <label for="searchInput">Search by activity name or topic</label>
+          <input id="searchInput" type="search" placeholder="e.g. water or engineering">
+        </div>
+        <div class="field">
+          <label for="materialFilter">Materials available</label>
+          <select id="materialFilter"><option value="">All materials</option></select>
+        </div>
+        <button id="clearFilters" class="secondary" type="button">Clear filters</button>
+      </div>
+      <p id="resultsCount" class="muted" aria-live="polite"></p>
+      <div id="activityList" class="cards"></div>
+    </section>
+
+    <section id="savedView" aria-labelledby="savedHeading" hidden>
+      <h2 id="savedHeading" tabindex="-1">Saved offline</h2>
+      <p class="muted">Activity copies stored in this browser on this device.</p>
+      <div id="savedList" class="cards"></div>
+    </section>
+
+    <section id="detailView" aria-labelledby="detailHeading" hidden>
+      <button id="backButton" class="secondary" type="button">← Back to list</button>
+      <div id="detailContent"></div>
+    </section>
+
+    <section id="plansView" aria-labelledby="plansHeading" hidden>
+      <h2 id="plansHeading" tabindex="-1">Session plans</h2>
+      <div id="syncSummary" class="notice" role="status" aria-live="polite" aria-atomic="true">
+        No session plans yet.
+      </div>
+
+      <div class="sync-panel">
+        <h3>Synchronisation and recovery</h3>
+        <div class="notice" id="syncHelp" aria-labelledby="syncHelpHeading">
+          <h4 id="syncHelpHeading">What does synchronisation mean?</h4>
+          <p>Synchronisation sends your <strong>completed session plans</strong> from this device to the receiving server. Saving a plan and sending it are two separate steps.</p>
+          <ul>
+            <li><strong>Pending:</strong> your plan is stored on this device but the server has not confirmed receipt.</li>
+            <li><strong>Sync all pending:</strong> send locally saved plans to the receiving server when it is available.</li>
+            <li><strong>Synced:</strong> the receiving server has confirmed receipt of your plan.</li>
+            <li><strong>If sending fails:</strong> your plan remains stored on this device. Select <strong>Retry sync</strong> when the receiving server is available again.</li>
+          </ul>
+        </div>
+        <div class="actions">
+          <button id="syncAll" type="button">Sync all pending (<span id="pendingCount">0</span>)</button>
+          <button id="verifyReceipt" class="secondary" type="button">Check server receipt</button>
+        </div>
+        <p id="syncStatus" class="status" role="status" aria-live="polite">No synchronisation attempted yet.</p>
+      </div>
+
+      <h3>Create a session plan</h3>
+      <p class="muted">Use fictional details only. One unfinished draft is stored locally at a time.</p>
+      <form id="planForm" class="plan-form">
+        <div class="field">
+          <label for="planActivity">STEM activity (required)</label>
+          <select id="planActivity" required><option value="">Select an activity</option></select>
+        </div>
+        <div class="field">
+          <label for="planTitle">Session title (required)</label>
+          <input id="planTitle" type="text" maxlength="100" required placeholder="e.g. Water Filtration Lesson">
+        </div>
+        <div class="field">
+          <label for="planDuration">Duration in minutes (required)</label>
+          <input id="planDuration" type="number" min="1" max="480" step="1" required>
+        </div>
+        <div class="field">
+          <label for="planSteps">Session steps (required)</label>
+          <textarea id="planSteps" rows="5" required placeholder="Describe the steps in order"></textarea>
+        </div>
+        <div class="field">
+          <label for="planSafety">Safety notes (required)</label>
+          <textarea id="planSafety" rows="3" required placeholder="List safety precautions"></textarea>
+        </div>
+        <div id="draftStatus" class="draft-indicator" data-state="empty" role="status" aria-live="polite" aria-atomic="true">
+          <strong id="draftState">No unfinished draft</strong>
+          <span id="draftDetail">Start typing to create a draft.</span>
+        </div>
+        <div class="actions">
+          <button id="saveDraftNow" class="secondary" type="button">Save draft now</button>
+          <button id="discardDraft" class="secondary" type="button">Discard draft</button>
+          <button type="submit">Save completed session plan</button>
+        </div>
+      </form>
+      <p id="planStatus" class="status" role="status" aria-live="polite">No completed plan saved during this session yet.</p>
+      <h3>Saved completed plans</h3>
+      <div id="plansList" class="cards"></div>
+    </section>
+
+    <section id="privacyView" aria-labelledby="privacyHeading" hidden>
+      <h2 id="privacyHeading" tabindex="-1">Local data &amp; shared-device privacy</h2>
+      <p>Anyone using this same browser profile can potentially access locally saved STEMMate plans. There are no user accounts or secure sign-out in this demonstration.</p>
+      <div class="notice" id="localDataSummary" role="status" aria-live="polite">Counting locally stored records…</div>
+      <div class="privacy-panel">
+        <h3>1. Export local data</h3>
+        <p>Download a JSON backup of saved activities, the unfinished draft and completed plans <strong>before clearing anything</strong>. The download can contain session-plan text and must be stored securely.</p>
+        <button id="exportLocalButton" type="button">Export local data (.json)</button>
+        <h3>2. Clear this browser's locally saved data</h3>
+        <p>This permanently deletes STEMMate's <strong>saved activities, current draft and completed plans</strong> from this browser profile. It does not erase plans already received by the Node.js server, and it does not remove the cached application files.</p>
+        <label for="clearConfirmation">To enable clearing, type <strong>CLEAR</strong> exactly:</label>
+        <input id="clearConfirmation" type="text" autocomplete="off" spellcheck="false" placeholder="Type CLEAR">
+        <button id="clearLocalButton" class="danger-button" type="button" disabled>Clear local STEMMate data</button>
+        <p id="privacyStatus" class="status" role="status" aria-live="polite">No local data has been cleared in this session.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <p><strong>Privacy:</strong> Use fictional data only; no real pupil information.</p>
+    <p><strong>Offline:</strong> The application shell is cached by a service worker. Drafts, activities and completed plans are stored in IndexedDB. Clearing site data may remove them.</p>
+    <p><strong>Demonstration limits:</strong> The receiver is local and unauthenticated. Clearing browser data is not a secure account sign-out and does not delete receiving-server records.</p>
+  </footer>
+</body>
+</html>
